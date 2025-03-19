@@ -1,0 +1,33 @@
+# Core dependencies
+requests==2.31.0
+python-dotenv==1.0.0
+
+# Database libraries
+psycopg2-binary==2.9.9
+
+# LLM and content processing
+langchain==0.3.21
+
+# For tokenization needed by OpenAI
+tiktoken==0.5.2
+
+# File handling
+PyPDF2==3.0.1
+unstructured==0.10.30
+
+# Logging and monitoring
+loguru==0.7.2
+
+# Testing
+pytest==7.4.0
+pytest-cov==4.1.0
+
+# Web framework (if needed for APIs)
+fastapi==0.104.1
+uvicorn==0.24.0
+
+# Development tools
+black==23.10.1
+isort==5.12.0
+flake8==6.1.0
+mypy==1.6.1

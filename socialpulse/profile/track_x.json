@@ -1,0 +1,184 @@
+{
+    "accounts": [
+      {
+        "handle": "@osscommunity",
+        "description": "Shares updates and trends in open-source software communities.",
+        "stats": {
+          "followers": "15K",
+          "following": "500",
+          "posts": "8K",
+          "note": "Estimated based on typical OSS community growth."
+        }
+      },
+      {
+        "handle": "@Blockchain",
+        "description": "Covers news and innovations in blockchain technology.",
+        "stats": {
+          "followers": "200K",
+          "following": "300",
+          "posts": "12K",
+          "note": "Estimated from historical blockchain account activity."
+        }
+      },
+      {
+        "handle": "@DeSciLabs",
+        "description": "Explores advancements in Decentralized Science.",
+        "stats": {
+          "followers": "10K",
+          "following": "400",
+          "posts": "3K",
+          "note": "Estimated for a niche DeSci account as of 2025."
+        }
+      },
+      {
+        "handle": "@OpenSourceOrg",
+        "description": "Advocates for open-source software principles and practices.",
+        "stats": {
+          "followers": "25K",
+          "following": "200",
+          "posts": "5K",
+          "note": "Estimated based on steady OSS advocacy presence."
+        }
+      },
+      {
+        "handle": "@Ethereum",
+        "description": "Official account for the Ethereum blockchain platform.",
+        "stats": {
+          "followers": "750K",
+          "following": "150",
+          "posts": "4K",
+          "note": "Projected from known 2023 data with moderate growth."
+        }
+      },
+      {
+        "handle": "@AIinTech",
+        "description": "Highlights developments in artificial intelligence and technology.",
+        "stats": {
+          "followers": "50K",
+          "following": "600",
+          "posts": "10K",
+          "note": "Estimated for a growing AI-focused account."
+        }
+      },
+      {
+        "handle": "@NFTPROJECTS",
+        "description": "Tracks trends and projects in the NFT space.",
+        "stats": {
+          "followers": "30K",
+          "following": "800",
+          "posts": "15K",
+          "note": "Estimated based on NFT community engagement."
+        }
+      },
+      {
+        "handle": "@GitHub",
+        "description": "Platform for hosting and collaborating on software projects.",
+        "stats": {
+          "followers": "2M",
+          "following": "100",
+          "posts": "6K",
+          "note": "Projected from 2023 data with steady growth."
+        }
+      },
+      {
+        "handle": "@SWGenomeProject",
+        "description": "Official account for the Software Genome Project (assumed).",
+        "stats": {
+          "followers": "TBD",
+          "following": "TBD",
+          "posts": "TBD",
+          "note": "No data; assumed account may not exist yet."
+        }
+      },
+      {
+        "handle": "@ConsenSys",
+        "description": "Develops blockchain solutions and Ethereum-based tools.",
+        "stats": {
+          "followers": "80K",
+          "following": "250",
+          "posts": "7K",
+          "note": "Estimated from 2023 trends with modest increase."
+        }
+      },
+      {
+        "handle": "@Solana",
+        "description": "Official account for the Solana blockchain.",
+        "stats": {
+          "followers": "1M",
+          "following": "200",
+          "posts": "9K",
+          "note": "Projected from 2023 data with Solana’s rising popularity."
+        }
+      },
+      {
+        "handle": "@SolanaFndn",
+        "description": "Solana Foundation promotes blockchain ecosystem growth.",
+        "stats": {
+          "followers": "150K",
+          "following": "300",
+          "posts": "4K",
+          "note": "Estimated based on foundation’s active outreach."
+        }
+      },
+      {
+        "handle": "@aeyakovenko",
+        "description": "Anatoly Yakovenko, co-founder of Solana.",
+        "stats": {
+          "followers": "300K",
+          "following": "500",
+          "posts": "20K",
+          "note": "Projected from founder’s influence and posting frequency."
+        }
+      },
+      {
+        "handle": "@PumpScience",
+        "description": "Solana-based project focused on decentralized science.",
+        "stats": {
+          "followers": "TBD",
+          "following": "TBD",
+          "posts": "TBD",
+          "note": "No data; speculative Solana DeSci project."
+        }
+      },
+      {
+        "handle": "@RaydiumProtocol",
+        "description": "Decentralized exchange protocol on Solana.",
+        "stats": {
+          "followers": "120K",
+          "following": "400",
+          "posts": "6K",
+          "note": "Estimated from DEX popularity on Solana."
+        }
+      },
+      {
+        "handle": "@ElectricCapital",
+        "description": "Analyzes blockchain developer activity and ecosystems.",
+        "stats": {
+          "followers": "20K",
+          "following": "300",
+          "posts": "2K",
+          "note": "Estimated for a niche analytics firm."
+        }
+      },
+      {
+        "handle": "@CoinMarketCap",
+        "description": "Provides cryptocurrency market data and rankings.",
+        "stats": {
+          "followers": "1.5M",
+          "following": "250",
+          "posts": "10K",
+          "note": "Projected from 2023 data with steady growth in crypto interest."
+        }
+      },
+      {
+        "handle": "@BNBChain",
+        "description": "Official account for the BNB Chain blockchain ecosystem.",
+        "stats": {
+          "followers": "800K",
+          "following": "300",
+          "posts": "7K",
+          "note": "Estimated from Binance ecosystem prominence as of 2025."
+        }
+      }
+    ]
+  }
