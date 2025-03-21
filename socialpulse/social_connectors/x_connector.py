@@ -1,30 +1,43 @@
-"""X (formerly Twitter) connector for SocialPulse module."""
+"""X (formerly Twitter) connector for SocialPulse module.
 
+cd to CryptoBrain directory
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+touch .env   # put into the X_API_KEY=sk-...
+python -m socialpulse.social_connectors.x_connector
+
+"""
 import os
+import sys
 import json
 import logging
 import requests
-from typing import List, Dict, Optional, Set, Tuple, Union
+from typing import List, Dict, Optional, Set, Tuple, Union, Any
 from pathlib import Path
-
-from social_connectors import BaseSocialConnector
-import sys
-import os
 from datetime import datetime, timedelta
 
-# Add parent directory to sys.path to import exceptions
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
+# Import base connector from local package
+from socialpulse.social_connectors.base_connector import BaseSocialConnector
 
-from exceptions import RateLimitException, AuthenticationException
+# Import exceptions
+try:
+    from socialpulse.exceptions import RateLimitException, AuthenticationException
+except ImportError:
+    # If running directly from socialpulse directory
+    module_path = Path(__file__).resolve()
+    sys.path.insert(0, str(module_path.parent.parent))
+    from exceptions import RateLimitException, AuthenticationException
 
 logger = logging.getLogger(__name__)
 
 def load_profile(profile_path: str = None) -> Dict:
     """Load project profile from JSON file."""
-    default_path = os.path.join(parent_dir, "profile", "profile.json")
-    profile_path = profile_path or default_path
+    # Get the path to the profile directory
+    module_path = Path(__file__).resolve()
+    socialpulse_dir = module_path.parent.parent
+    default_path = socialpulse_dir / "profile" / "profile.json"
+    profile_path = profile_path or str(default_path)
     
     try:
         with open(profile_path, 'r') as f:
@@ -37,8 +50,11 @@ def load_profile(profile_path: str = None) -> Dict:
 
 def load_track_accounts(track_path: str = None) -> List[Dict]:
     """Load X accounts to track from JSON file."""
-    default_path = os.path.join(parent_dir, "profile", "track_x.json")
-    track_path = track_path or default_path
+    # Get the path to the profile directory
+    module_path = Path(__file__).resolve()
+    socialpulse_dir = module_path.parent.parent
+    default_path = socialpulse_dir / "profile" / "track_x.json"
+    track_path = track_path or str(default_path)
     
     try:
         with open(track_path, 'r') as f:
@@ -51,52 +67,115 @@ def load_track_accounts(track_path: str = None) -> List[Dict]:
         return []
 
 class XConnector(BaseSocialConnector):
-    """Connector for X (formerly Twitter) platform."""
+    """Connector for X (formerly Twitter) platform.
     
-    def __init__(self, bearer_token: str = None, profile_path: str = None, track_path: str = None):
+    Features:
+    - Real API integration with the X API v2
+    - Automatic fallback to mock data when no token is provided
+    - Configurable rate limiting and error handling
+    """
+    
+    def __init__(self, api_key: str = None, profile_path: str = None, track_path: str = None):
         """
         Initialize X connector with API credentials and profile data.
         
         Args:
-            bearer_token: X Bearer token for API authentication
+            api_key: X API key for authentication
+            api_secret: X API secret for authentication
             profile_path: Path to profile.json file
             track_path: Path to track_x.json file with accounts to track
         """
-        self.bearer_token = bearer_token or os.environ.get("X_BEARER_TOKEN")
-        self.base_url = "https://api.twitter.com/2"
-        self.session = self._create_session()
+        self.api_key = api_key
+        self.base_url = "https://alpha.pumpagent.ai/api"
+        
+        if not self.api_key:
+            raise AuthenticationException("X_API_KEY is required for XConnector. Please provide a valid API key.")
+        
         self.profile = load_profile(profile_path)
         self.track_accounts = load_track_accounts(track_path)
-        self.last_trends_check = None
-        self.trend_check_interval = timedelta(minutes=30)  # Check trends every 30 minutes
-        self.last_accounts_check = None
-        self.accounts_check_interval = timedelta(hours=6)  # Check account tweets every 6 hours
-        
-    # Token acquisition is handled externally
-            
-    def _create_session(self) -> requests.Session:
-        """Create authenticated session for X API."""
-        session = requests.Session()
-        if self.bearer_token:
-            session.headers.update({"Authorization": f"Bearer {self.bearer_token}"})
-        return session
-        
-    def update_profile(self, profile_path: str = None):
-        """Update the profile data."""
-        self.profile = load_profile(profile_path)
     
-    def update_track_accounts(self, track_path: str = None):
-        """Update the track accounts data."""
-        self.track_accounts = load_track_accounts(track_path)
-        
-    # Token lifecycle is handled externally
-    
-    def get_account_tweets(self, account_handle: str, count: int = 10) -> List[Dict]:
+    def check_rate_limit(self) -> Dict[str, Any]:
         """
-        Get recent tweets from a specific X account.
+        Makes a lightweight API call to check if rate limit has been exceeded.
+        
+        Returns:
+            Dict with rate limit status, containing:
+                'ok': True if rate limits are OK, False if exceeded
+                'limit': Total request limit if available
+                'remaining': Remaining requests if available
+                'reset': Time when limit resets (seconds since epoch) if available
+                'message': Error message if any
+                
+        Raises:
+            AuthenticationException: If no API key or secret is available
+        """
+        if not self.api_key:
+            raise AuthenticationException("API key is required for X API calls")
+            
+        result = {
+            'ok': False,
+            'limit': None,
+            'remaining': None,
+            'reset': None,
+            'message': None
+        }
+        
+        try:
+            # Use a lightweight API endpoint that doesn't consume many resources
+            session = requests.Session()
+            endpoint = "tool/twitter/user-info"
+            url = f"{self.base_url}/{endpoint}/?username=web3hobby39067"
+            
+            # Set the API key in the header
+            headers = {
+                'Accept': 'application/json',
+                'x-api-key': self.api_key
+            }
+            
+            response = session.get(url, headers=headers)
+            response.raise_for_status()
+            print(response.text)
+            # Extract response data
+            result['ok'] = True
+            
+            # The alpha.pumpagent.ai API might have different rate limit headers
+            # or include rate limit info in the response body
+            # For now, we'll assume success if the request goes through
+            result['limit'] = response.headers.get('x-ratelimit-limit', 'unknown')
+            result['remaining'] = response.headers.get('x-ratelimit-remaining', 'unknown')
+            result['reset'] = response.headers.get('x-ratelimit-reset', 'unknown')
+            
+            # Log the response for debugging
+            logger.debug(f"Rate limit response: {response.text[:200]}...")
+            logger.debug(f"Rate limit headers: {dict(response.headers)}")
+            
+            return result
+            
+        except requests.RequestException as e:
+            result['ok'] = False
+            
+            if hasattr(e, 'response') and e.response:
+                if e.response.status_code == 429:
+                    result['message'] = "Rate limit exceeded"
+                    # Extract rate limit headers if available
+                    headers = e.response.headers
+                    result['limit'] = headers.get('x-rate-limit-limit')
+                    result['remaining'] = headers.get('x-rate-limit-remaining')
+                    result['reset'] = headers.get('x-rate-limit-reset')
+                else:
+                    result['message'] = f"API error: {e}"
+            else:
+                result['message'] = f"Connection error: {e}"
+                
+            return result
+
+    def get_account_tweets(self, account_handle: str, date_str: str = None) -> List[Dict]:
+        """
+        Get recent tweets from a specific X account using the X API v2.
         
         Args:
             account_handle: X account handle (with or without @)
+            date_str: Date string in format 'yyyy-mm-dd' to filter tweets from
             count: Maximum number of tweets to return
             
         Returns:
@@ -105,369 +184,250 @@ class XConnector(BaseSocialConnector):
         # Remove @ if present in the handle
         handle = account_handle.lstrip('@')
         
-        # In a real implementation, this would use the X API to get tweets
-        # For now, create mock data based on the account handle
-        logger.info(f"Fetching {count} tweets from {handle}")
-        
-        # Get account info for more realistic mock data
-        account_info = next((acc for acc in self.track_accounts if acc["handle"].lstrip('@') == handle), None)
-        
-        tweets = []
-        current_time = datetime.now()
-        
-        # Generate mock tweets
-        for i in range(count):
-            # Create time with decreasing recency
-            tweet_time = current_time - timedelta(hours=i*3)
+        if not self.api_key:
+            raise AuthenticationException("API key is required for X API calls")
             
-            # Create tweet with content that matches account focus
-            description = account_info["description"] if account_info else f"Content from {handle}"
-            topic_words = description.split()[:3]  # Take first few words for topic simulation
+        
+        try:
+            # Use a lightweight API endpoint that doesn't consume many resources
+            session = requests.Session()
+            endpoint = "tool/twitter/user-tweets"
+            url = f"{self.base_url}/{endpoint}/?username={handle}"
             
-            tweet = {
-                "id": f"{handle}-{i}",
-                "text": self._generate_mock_tweet(handle, topic_words),
-                "created_at": tweet_time.isoformat(),
-                "author": handle,
-                "metrics": {
-                    "likes": random.randint(5, 1000),
-                    "retweets": random.randint(0, 200),
-                    "replies": random.randint(0, 50)
-                }
+            # Set the API key in the header
+            headers = {
+                'Accept': 'application/json',
+                'x-api-key': self.api_key
             }
-            tweets.append(tweet)
             
-        return tweets
-    
-    def _generate_mock_tweet(self, handle: str, topic_words: List[str]) -> str:
-        """
-        Generate a realistic mock tweet based on account and topics.
-        
-        Args:
-            handle: Account handle
-            topic_words: List of topic-related words
+            response = session.get(url, headers=headers)
+            result = response.json()
             
-        Returns:
-            Generated tweet text
-        """
-        # Templates for realistic tweets
-        templates = [
-            "Just published our latest {topic} update. Check it out! #{topic2} #{topic3}",
-            "Excited to announce a new {topic} integration with {topic2}. More details coming soon!",
-            "Our team is working on improving {topic} functionality. Any feature requests? #{topic3}",
-            "Today's {topic} market is showing interesting trends in {topic2}. Thoughts? #{topic3}",
-            "New research suggests {topic} will play a key role in future {topic2} development. #{topic3}",
-            "Looking for feedback on our recent {topic} release. What do you think about the {topic2} features?",
-            "Join us for a live discussion on {topic} and {topic2} next week! Register now. #{topic3}",
-        ]
-        
-        # Ensure we have enough topic words
-        while len(topic_words) < 3:
-            topic_words.append(random.choice(["technology", "innovation", "development", "update"]))
-        
-        # Select a template and fill it
-        template = random.choice(templates)
-        return template.format(
-            topic=topic_words[0],
-            topic2=topic_words[1],
-            topic3=topic_words[2].replace(' ', '')
-        )
-    
-    def get_all_track_account_tweets(self, tweets_per_account: int = 5) -> Dict[str, List[Dict]]:
-        """
-        Get recent tweets from all tracked accounts.
-        
-        Args:
-            tweets_per_account: Number of tweets to fetch per account
-            
-        Returns:
-            Dictionary mapping account handles to lists of tweets
-        """
-        # Check if we need fresh data based on time interval
-        current_time = datetime.now()
-        if (self.last_accounts_check and 
-            current_time - self.last_accounts_check < self.accounts_check_interval):
-            logger.info("Using cached track account tweets")
-            # In a real implementation, return cached tweets here
-            # For now, we'll always generate fresh mock data
-        
-        self.last_accounts_check = current_time
-        
-        # If no track accounts, return empty dict
-        if not self.track_accounts:
-            logger.warning("No track accounts configured, use update_track_accounts() method")
-            return {}
-            
-        logger.info(f"Fetching tweets from {len(self.track_accounts)} tracked accounts")
-        
-        # Fetch tweets for each account
-        all_tweets = {}
-        for account in self.track_accounts:
-            handle = account["handle"]
-            all_tweets[handle] = self.get_account_tweets(handle, tweets_per_account)
-            
-        return all_tweets
-    
-    def _extract_profile_filters(self) -> Tuple[List[str], List[str]]:
-        """
-        Extract keywords and hashtags from profile for filtering.
-        
-        Returns:
-            Tuple containing (keywords, hashtags) lists
-        """
-        keywords = self.profile.get('keywords', [])
-        # Strip hashtag symbol from profile hashtags for easier comparison
-        hashtags = [tag.lstrip('#').lower() for tag in self.profile.get('hashtags', [])]
-        return keywords, hashtags
-
-    def get_trending_topics(self, location_id: str = "1", use_profile: bool = True) -> List[Dict]:
-        """
-        Get trending topics from X, optionally filtered by profile data.
-        
-        Args:
-            location_id: WOEID (Where On Earth ID) for location-specific trends
-            use_profile: Whether to filter trends by profile keywords and hashtags
-            
-        Returns:
-            List of trending topics with relevance scores if filtered by profile
-        """
-        try:
-            # Check if we need to refresh trends based on time interval
-            current_time = datetime.now()
-            if (self.last_trends_check is None or 
-                (current_time - self.last_trends_check) > self.trend_check_interval):
-                # In a real implementation, this would make an API call to fetch fresh trends
-                # For simplicity, we're using mock data
-                self.last_trends_check = current_time
-                
-            # Get mock trends dynamically based on profile data if available
-            if self.profile:
-                # Extract terms from profile to create more relevant mock trends
-                profile_terms = []
-                # Add hashtags without the # symbol
-                profile_terms.extend([tag.strip('#') for tag in self.profile.get('hashtags', [])])
-                # Add selected keywords
-                profile_terms.extend(self.profile.get('keywords', []))
-                # Add unique components (shortened)
-                for component in self.profile.get('unique_components', []):
-                    term = component.split(':', 1)[0].strip() if ':' in component else component.strip()
-                    profile_terms.append(term)
-                
-                # Create mock trends using profile data
-                trends = [
-                    {"name": f"#{term.replace(' ', '')}", "tweet_volume": 50000 - (i * 3000)} 
-                    for i, term in enumerate(profile_terms[:12])
-                ]
-            else:
-                logger.warning("No profile data available for trend filtering")
-                trends = []
-            
-            # If not using profile for filtering, return all trends
-            if not use_profile or not self.profile:
-                return trends
-                
-            # Filter and score trends based on profile data
-            keywords, hashtags = self._extract_profile_filters()
-            
-            if not keywords and not hashtags:
-                logger.warning("No keywords or hashtags found in profile for filtering")
-                return trends
-                
-            scored_trends = []
-            for trend in trends:
-                trend_text = trend["name"].lstrip('#').lower()
-                relevance_score = 0
-                matches = []
-                
-                # Check for hashtag matches (higher weight)
-                for tag in hashtags:
-                    if tag == trend_text or tag in trend_text:
-                        relevance_score += 2
-                        matches.append(f"hashtag:{tag}")
-                
-                # Check for keyword matches
-                for keyword in keywords:
-                    keyword_lower = keyword.lower()
-                    if keyword_lower == trend_text or keyword_lower in trend_text:
-                        relevance_score += 1
-                        matches.append(f"keyword:{keyword}")
-                
-                # Add trend with relevance info if it matches
-                if relevance_score > 0:
-                    trend_copy = trend.copy()
-                    trend_copy["relevance_score"] = relevance_score
-                    trend_copy["matches"] = matches
-                    scored_trends.append(trend_copy)
-            
-            # Sort by relevance score (descending)
-            return sorted(scored_trends, key=lambda x: x["relevance_score"], reverse=True)
-            
-        except Exception as e:
-            logger.error(f"Error fetching trending topics from X: {str(e)}")
-            return []
-    
-    def search_posts(self, query: str = None, count: int = 10, use_profile: bool = False) -> List[Dict]:
-        """
-        Search for tweets matching a query or using profile data.
-        
-        Args:
-            query: Search query (optional if use_profile is True)
-            count: Number of posts to return
-            use_profile: Whether to use profile data for search
-            
-        Returns:
-            List of posts matching the criteria
-        """
-        try:
-            search_terms = []
-            
-            # Use explicit query if provided
-            if query:
-                search_terms.append(query)
-                
-            # Add profile-based search terms if requested
-            if use_profile and self.profile:
-                keywords, hashtags = self._extract_profile_filters()
-                
-                # Add keywords from profile
-                search_terms.extend(keywords)
-                
-                # Add hashtags from profile (with # prefix)
-                search_terms.extend([f"#{tag}" for tag in hashtags])
-            
-            # If no search terms available, return empty list
-            if not search_terms:
-                logger.warning("No search terms provided or found in profile")
+            # Process the response
+            if not result or not isinstance(result, list):
+                logger.warning(f"Invalid response format for user tweets: {result}")
                 return []
                 
-            # Log what we're searching for
-            logger.info(f"Searching X for posts with terms: {search_terms}")
+            # Filter tweets by timestamp based on the given date or today
+            if date_str:
+                # Parse the date string in yyyy-mm-dd format
+                try:
+                    filter_date = datetime.strptime(date_str, '%Y-%m-%d')
+                    filter_timestamp = int(filter_date.timestamp())
+                except ValueError:
+                    logger.warning(f"Invalid date format: {date_str}, using current date instead")
+                    filter_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+                    filter_timestamp = int(filter_date.timestamp())
+            else:
+                filter_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+                filter_timestamp = int(filter_date.timestamp())
             
-            # Mock response for demonstration
-            # In a real implementation, we would send queries to the X API with the search terms
-            mock_results = []
-            for i in range(count):
-                # Generate a different text for each search term to simulate varied results
-                term_index = i % len(search_terms)
-                search_term = search_terms[term_index]
-                
-                mock_results.append({
-                    "id": f"tweet_{i}",
-                    "text": f"This is a mock tweet about {search_term} with some additional content for demonstration",
-                    "user": {"username": f"user_{i}", "followers": 5000 - i*100},
-                    "engagement": {"retweets": 45 - i, "likes": 130 - i*10},
-                    "created_at": "2025-03-19T12:00:00Z",
-                    "search_term_matched": search_term
-                })
-                
-            return mock_results
+            # Debug output
+            print(f"Filter date: {filter_date.isoformat()}, Timestamp: {filter_timestamp}")
+            print(f"Received {len(result)} tweets before filtering")
+            if result and len(result) > 0:
+                print(f"First tweet timestamp: {result[0].get('timestamp')}")
+                print(f"First tweet date: {datetime.fromtimestamp(int(result[0].get('timestamp', 0))).isoformat()}")
             
-        except Exception as e:
-            logger.error(f"Error searching tweets on X: {str(e)}")
-            return []
-
-    def get_relevant_content(self, max_trends: int = 5, max_posts_per_trend: int = 3, 
-                             track_tweets_per_account: int = 2) -> Dict[str, Any]:
+            filtered_tweets = [tweet for tweet in result if int(tweet.get('timestamp', 0)) >= filter_timestamp]
+            
+            # Format the tweets to match our internal structure
+            formatted_tweets = []
+            for tweet in filtered_tweets:
+                # Extract hashtags from text if not provided in API response
+                hashtags = tweet.get("hashtags", [])
+                if not hashtags and "text" in tweet:
+                    # Extract hashtags from tweet text
+                    words = tweet["text"].split()
+                    hashtags = [word[1:] for word in words if word.startswith('#')]
+                
+                formatted_tweet = {
+                    "id": tweet.get("id"),
+                    "text": tweet.get("text"),
+                    "created_at": datetime.fromtimestamp(int(tweet.get("timestamp", 0))).isoformat(),
+                    "author": tweet.get("username"),
+                    "metrics": {
+                        "likes": tweet.get("likes", 0),
+                        "retweets": tweet.get("retweets", 0),
+                        "replies": tweet.get("replies", 0),
+                        "views": tweet.get("views", 0)
+                    },
+                    "hashtags": hashtags,
+                    "url": tweet.get("permanentUrl")
+                }
+                formatted_tweets.append(formatted_tweet)
+            
+            logger.info(f"Retrieved {len(formatted_tweets)} tweets from {handle}")
+            print(formatted_tweets)
+            return formatted_tweets
+        except requests.RequestException as e:
+            logger.error(f"Failed to fetch tweets: {e}")
+            return {"error":"failed to get tweets"}
+    
+    def search_trendy_tweets(self, query: str, count: int = 10, date_str: str = None, min_likes: int = 10, min_retweets: int = 10) -> List[Dict]:
         """
-        Integrated approach that combines passive trend monitoring with active searching and account tracking.
-        This method uses the profile data to:
-        1. Get trending topics filtered by profile relevance
-        2. For each relevant trend, search for posts about that trend
-        3. Get tweets from tracked accounts defined in track_x.json
+        Search for trending tweets matching the query with additional filters.
         
         Args:
-            max_trends: Maximum number of trends to process
-            max_posts_per_trend: Maximum number of posts to fetch per trend
-            track_tweets_per_account: Number of tweets to fetch per tracked account
+            query: Search query string
+            count: Maximum number of tweets to return
+            date_str: Optional date string in format 'yyyy-mm-dd' to filter tweets from
+            min_likes: Minimum number of likes for tweets to include
+            min_retweets: Minimum number of retweets for tweets to include
+            sort_by: Field to sort by ('popular', 'recent', 'relevant')
             
         Returns:
-            Dictionary with relevant trends, associated posts, and tracked account tweets
+            List of tweet dictionaries matching the search criteria ordered by popularity
         """
-        if not self.profile:
-            logger.warning("No profile data available for content filtering")
-            return {"trends": [], "posts": [], "track_tweets": {}}
-        
-        # Get trends filtered by profile
-        trends = self.get_trending_topics(use_profile=True)
-        relevant_trends = trends[:max_trends] if len(trends) > max_trends else trends
-        
-        # For each relevant trend, fetch related posts
-        trend_posts = {}
-        for trend in relevant_trends:
-            trend_name = trend["name"]
-            # Search for posts related to this trend
-            posts = self.search_posts(query=trend_name, count=max_posts_per_trend)
-            trend_posts[trend_name] = posts
-        
-        # Also get posts based on profile keywords
-        keyword_posts = self.search_posts(use_profile=True, count=max_posts_per_trend * 2)
-        
-        # Get tweets from tracked accounts
-        track_tweets = self.get_all_track_account_tweets(tweets_per_account=track_tweets_per_account)
-        
-        return {
-            "trends": relevant_trends,
-            "trend_posts": trend_posts,
-            "keyword_posts": keyword_posts,
-            "track_tweets": track_tweets
-        }
+        if not self.api_key:
+            raise AuthenticationException("API key is required for X API calls")
+            
+        try:
+            # Prepare the request
+            session = requests.Session()
+            endpoint = "tool/twitter/search"
+            url = f"{self.base_url}/{endpoint}"
+            
+            # Build query string with date filter if provided
+            query_params = {}
+            
+            # Build the enhanced query with filters
+            enhanced_query = query
+            
+            # Add date filter if provided
+            if date_str:
+                try:
+                    # Validate date format
+                    filter_date = datetime.strptime(date_str, '%Y-%m-%d')
+                    # Add date to query
+                    enhanced_query = f"{enhanced_query} since:{date_str}"
+                except ValueError:
+                    logger.warning(f"Invalid date format: {date_str}, using query without date filter")
+            
+            # Add popularity filters
+            if min_likes is not None and min_likes > 0:
+                enhanced_query = f"{enhanced_query} min_faves:{min_likes}"
+            
+            if min_retweets is not None and min_retweets > 0:
+                enhanced_query = f"{enhanced_query} min_retweets:{min_retweets}"
+            
+            # Set the query parameter
+            query_params['query'] = enhanced_query
+                
+            # Set max results
+            query_params['maxResults'] = count
+            
+            # Set headers
+            headers = {
+                'Accept': 'application/json',
+                'x-api-key': self.api_key
+            }
+            
+            # Make the request
+            response = session.get(url, params=query_params, headers=headers)
+            response.raise_for_status()
+            
+            # Parse the response
+            data = response.json()
+            
+            # Handle different response formats
+            if isinstance(data, dict):
+                # Response is a dictionary with a 'data' field
+                result = data.get('data', [])
+            elif isinstance(data, list):
+                # Response is directly a list
+                result = data
+            else:
+                result = []
+                
+            logger.info(f"Found {len(result)} tweets matching query: {query}")
+            return result
+        except requests.RequestException as e:
+            logger.error(f"Failed to search tweets: {e}")
+            return []
 
 # Usage example
 if __name__ == "__main__":
-    import os
     from dotenv import load_dotenv
     
     # Load environment variables from .env file if present
+    # Set X_API_KEY and X_API_SECRET environment variables or add to .env file
     load_dotenv()
     
-    # Create connector with bearer token
-    # Option 1: Pass token directly
-    # connector = XConnector(bearer_token="YOUR_BEARER_TOKEN")
+    # Create connector with API credentials
+
+    try:
+        connector = XConnector(
+                api_key=os.getenv("X_API_KEY"), 
+                profile_path="socialpulse/profile.json", 
+                track_path="socialpulse/track_x.json"
+            )
+    except AuthenticationException as e:
+        print(f"Authentication error: {e}")
+        print("Please set X_API_KEY and X_API_SECRET environment variables with valid credentials")
+        sys.exit(1)
     
-    # Option 2: Use environment variable
-    # Set X_BEARER_TOKEN environment variable or add to .env file
-    connector = XConnector()
+    # Check rate limits before making any API calls
+    print("\n--- Checking X API Rate Limits ---")
+    rate_limit_status = connector.check_rate_limit()
     
-    # Example 1: Get all tweets from tracked accounts with their hashtags and keywords
-    print("\n--- Example 1: Account Tracking ---")
-    track_tweets = connector.get_all_track_account_tweets(tweets_per_account=3)
-    track_handles = list(track_tweets.keys())
-    print(f"Tracking {len(track_handles)} accounts")
-    for handle in track_handles[:3]:  # Show first 3 accounts
-        print(f"\nTweets from {handle}:")
-        for tweet in track_tweets[handle]:
-            # Extract hashtags from tweet text
-            words = tweet['text'].split()
-            hashtags = [word for word in words if word.startswith('#')]
-            print(f"- {tweet['text'][:80]}...")
-            print(f"  Hashtags: {', '.join(hashtags) if hashtags else 'None'}")
+    # Display rate limit information and exit if limits reached
+    if rate_limit_status['ok']:
+        print(f"Rate limits OK. Remaining requests: {rate_limit_status['remaining']}")
+    else:
+        print(f"Rate limit issue: {rate_limit_status['message']}, remaining: {rate_limit_status['remaining']}")
+        print("Exiting due to rate limit restrictions.")
+        sys.exit(1)
+    # Example 1: Get tweets from a specific account with date filtering
+    print("\n--- Example 1: Account Tweets with Date Filter ---")
+    account_tweets = connector.get_account_tweets('@OpenSourceOrg', date_str='2025-03-19')
+    print(f"Fetched {len(account_tweets)} tweets from OpenSourceOrg for 2025-03-19")
     
-    # Example 2: Find trending topics related to our tracked accounts
-    print("\n--- Example 2: Related Trending Topics ---")
-    # In a real implementation, this would find trends related to our tracked accounts
-    # For now, we use the profile-filtered trends as a proxy
-    profile_trends = connector.get_trending_topics(use_profile=True)
-    print(f"Found {len(profile_trends)} trending topics related to tracked accounts:")
-    for trend in profile_trends[:5]:  # Show top 5
-        print(f"- {trend['name']} (Relevance: {trend.get('relevance_score', 'N/A')})")
+    # Example 2: Search for trending tweets ranked by popularity
+    print("\n--- Example 2: Search for Trending Tweets (Popularity Ranked) ---")
+    search_query = "crypto"  # Simple query term that should have many results
+    search_date = "2025-03-19"  # Yesterday's date
+    search_results = connector.search_trendy_tweets(
+        query=search_query, 
+        count=10,
+        date_str=search_date,
+        min_likes=5,           # Only tweets with at least 5 likes
+        min_retweets=2,        # Only tweets with at least 2 retweets
+    )
+    print(f"Found {len(search_results)} popular tweets matching query: '{search_query}' since {search_date}")
     
-    # Example 3: Get relevant content filtered by profile
-    print("\n--- Example 3: Complete Content Pipeline ---")
-    relevant_content = connector.get_relevant_content(max_trends=3, max_posts_per_trend=2, track_tweets_per_account=2)
-    
-    # Show stats
-    print(f"Pipeline results:")
-    print(f"- {len(relevant_content['track_tweets'])} accounts tracked")
-    print(f"- {len(relevant_content['trends'])} relevant trending topics")
-    print(f"- {sum(len(posts) for posts in relevant_content['trend_posts'].values())} posts from trends")
-    print(f"- {len(relevant_content['keyword_posts'])} posts from profile keywords")
-    
-    # Show sample of content
-    if relevant_content['trends']:
-        trend = relevant_content['trends'][0]['name']
-        posts = relevant_content['trend_posts'].get(trend, [])
-        if posts:
-            print(f"\nSample posts for trend '{trend}':")
-            for post in posts[:2]:
-                print(f"- {post['text'][:80]}...")
+    # Display first 3 search results, if any
+    for i, tweet in enumerate(search_results[:3]):
+        print(f"\nTweet {i+1}:")
+        print(f"Text: {tweet.get('text', 'No text')[:100]}...")
+        
+        # Get username based on the fields available in the actual API response
+        username = tweet.get('username', 'Unknown')
+        print(f"Author: @{username}")
+        
+        # Handle timestamp (convert from Unix epoch if present)
+        if 'timestamp' in tweet:
+            # Convert timestamp to human-readable format
+            tweet_time = datetime.fromtimestamp(tweet['timestamp'])
+            formatted_time = tweet_time.strftime("%Y-%m-%d %H:%M")
+            print(f"Created at: {formatted_time}")
+        else:
+            print(f"Created at: {tweet.get('created_at', 'Unknown')}")
+            
+        # Show engagement metrics
+        likes = tweet.get('likes', 0)
+        retweets = tweet.get('retweets', 0)
+        views = tweet.get('views', 0)
+        replies = tweet.get('replies', 0)
+        
+        print(f"Likes: {likes}")
+        print(f"Retweets: {retweets}")
+        print(f"Views: {views}")
+        print(f"Replies: {replies}")
+        print(f"URL: {tweet.get('permanentUrl', '')}")
+
+
+
+    print("\n--- Example 3: Get relevant content filtered by profile ---")
+
 

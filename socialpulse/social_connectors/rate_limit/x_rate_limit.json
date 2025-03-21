@@ -1,0 +1,618 @@
+{
+    "categories": [
+      {
+        "name": "Tweets",
+        "endpoints": [
+          {
+            "endpoint": "DELETE /2/tweets/:id",
+            "documentation_url": "/en/docs/twitter-api/tweets/manage-tweets/introduction",
+            "pro_limit": "50 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "17 requests / 24 hours PER USER; 17 requests / 24 hours PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "DELETE /2/users/:id/likes/:tweet_id",
+            "documentation_url": "/en/docs/twitter-api/tweets/likes/introduction",
+            "pro_limit": "50 requests / 15 mins PER USER",
+            "basic_limit": "100 requests / 24 hours PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "DELETE /2/users/:id/retweets/:tweet_id",
+            "documentation_url": "/en/docs/twitter-api/tweets/retweets/introduction",
+            "pro_limit": "50 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/tweets",
+            "documentation_url": "/en/docs/twitter-api/tweets/lookup/introduction",
+            "pro_limit": "900 requests / 15 mins PER USER; 450 requests / 15 mins PER APP",
+            "basic_limit": "15 requests / 15 mins PER USER; 15 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/tweets/:id",
+            "documentation_url": "/en/docs/twitter-api/tweets/lookup/introduction",
+            "pro_limit": "900 requests / 15 mins PER USER; 450 requests / 15 mins PER APP",
+            "basic_limit": "15 requests / 15 mins PER USER; 15 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/tweets/:id/liking_users",
+            "documentation_url": "/en/docs/twitter-api/tweets/likes/introduction",
+            "pro_limit": "75 requests / 15 mins PER USER; 75 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER USER; 25 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/tweets/:id/quote_tweets",
+            "documentation_url": "/en/docs/twitter-api/tweets/retweets/introduction",
+            "pro_limit": "75 requests / 15 mins PER USER; 75 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER USER; 5 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/tweets/:id/retweeted_by",
+            "documentation_url": "/en/docs/twitter-api/tweets/retweets/introduction",
+            "pro_limit": "75 requests / 15 mins PER USER; 75 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER USER; 5 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/tweets/counts/all",
+            "documentation_url": "/en/docs/twitter-api/tweets/counts/introduction",
+            "pro_limit": "300 requests / 15 mins PER APP",
+            "basic_limit": "N/A",
+            "free_limit": "N/A",
+            "special_attributes": [
+              "enhanced operators",
+              "1024 query length"
+            ]
+          },
+          {
+            "endpoint": "GET /2/tweets/counts/recent",
+            "documentation_url": "/en/docs/twitter-api/tweets/counts/introduction",
+            "pro_limit": "300 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER APP",
+            "special_attributes": [
+              "512 query length",
+              "core operators"
+            ]
+          },
+          {
+            "endpoint": "GET /2/tweets/search/all",
+            "documentation_url": "/en/docs/twitter-api/tweets/search/introduction",
+            "pro_limit": "1 requests / second PER USER; 1 requests / second PER APP",
+            "basic_limit": "N/A",
+            "free_limit": "N/A",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/tweets/search/recent",
+            "documentation_url": "/en/docs/twitter-api/tweets/search/introduction",
+            "pro_limit": "300 requests / 15 mins PER USER; 450 requests / 15 mins PER APP",
+            "basic_limit": "60 requests / 15 mins PER USER; 60 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": [
+              "10 default results per response",
+              "100 results per response",
+              "512 query length",
+              "core operators"
+            ]
+          },
+          {
+            "endpoint": "GET /2/tweets/search/stream",
+            "documentation_url": "https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/introduction",
+            "pro_limit": "50 requests / 15 mins PER APP",
+            "basic_limit": "N/A",
+            "free_limit": "N/A",
+            "special_attributes": [
+              "1000 rules",
+              "does not support backfill",
+              "1024 rule length",
+              "enterprise",
+              "1 connection",
+              "250 Tweets per second"
+            ]
+          },
+          {
+            "endpoint": "GET /2/tweets/search/stream/rules",
+            "documentation_url": "https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/introduction",
+            "pro_limit": "450 requests / 15 mins PER APP",
+            "basic_limit": "N/A",
+            "free_limit": "N/A",
+            "special_attributes": [
+              "1000 rules",
+              "does not support backfill",
+              "1024 rule length",
+              "enterprise",
+              "1 connection",
+              "250 Tweets per second"
+            ]
+          },
+          {
+            "endpoint": "POST /2/users/:id/likes",
+            "documentation_url": "/en/docs/twitter-api/tweets/likes/introduction",
+            "pro_limit": "1000 requests / 24 hours PER USER",
+            "basic_limit": "200 requests / 24 hours PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "POST /2/users/:id/retweets",
+            "documentation_url": "/en/docs/twitter-api/tweets/retweets/introduction",
+            "pro_limit": "50 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "PUT /2/tweets/:tweet_id/hidden",
+            "documentation_url": "/en/docs/twitter-api/tweets/hide-replies/introduction",
+            "pro_limit": "50 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          }
+        ]
+      },
+      {
+        "name": "Users",
+        "endpoints": [
+          {
+            "endpoint": "DELETE /2/users/:source_user_id/following/:target_user_id",
+            "documentation_url": "/en/docs/twitter-api/users/follows/introduction",
+            "pro_limit": "50 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "DELETE /2/users/:source_user_id/muting/:target_user_id",
+            "documentation_url": "/en/docs/twitter-api/users/mutes/introduction",
+            "pro_limit": "50 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/users",
+            "documentation_url": "/en/docs/twitter-api/users/lookup/introduction",
+            "pro_limit": "900 requests / 15 mins PER USER; 300 requests / 15 mins PER APP",
+            "basic_limit": "100 requests / 24 hours PER USER; 500 requests / 24 hours PER APP",
+            "free_limit": "1 requests / 24 hours PER USER; 1 requests / 24 hours PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/users/:id",
+            "documentation_url": "/en/docs/twitter-api/users/lookup/introduction",
+            "pro_limit": "900 requests / 15 mins PER USER; 300 requests / 15 mins PER APP",
+            "basic_limit": "100 requests / 24 hours PER USER; 500 requests / 24 hours PER APP",
+            "free_limit": "1 requests / 24 hours PER USER; 1 requests / 24 hours PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/users/by",
+            "documentation_url": "/en/docs/twitter-api/users/lookup/introduction",
+            "pro_limit": "900 requests / 15 mins PER USER; 300 requests / 15 mins PER APP",
+            "basic_limit": "100 requests / 24 hours PER USER; 500 requests / 24 hours PER APP",
+            "free_limit": "1 requests / 24 hours PER USER; 1 requests / 24 hours PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/users/by/username/:username",
+            "documentation_url": "/en/docs/twitter-api/users/lookup/introduction",
+            "pro_limit": "900 requests / 15 mins PER USER; 300 requests / 15 mins PER APP",
+            "basic_limit": "100 requests / 24 hours PER USER; 500 requests / 24 hours PER APP",
+            "free_limit": "3 requests / 15 mins PER USER; 3 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/users/me",
+            "documentation_url": "/en/docs/twitter-api/users/lookup/introduction",
+            "pro_limit": "75 requests / 15 mins PER USER",
+            "basic_limit": "250 requests / 24 hours PER USER",
+            "free_limit": "25 requests / 24 hours PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/users/search",
+            "documentation_url": "/en/docs/twitter-api/users/search/api-reference/get-users-search",
+            "pro_limit": "900 requests / 15 mins PER USER; 300 requests / 15 mins PER APP",
+            "basic_limit": "N/A",
+            "free_limit": "N/A",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "POST /2/users/:id/following",
+            "documentation_url": "/en/docs/twitter-api/users/follows/introduction",
+            "pro_limit": "50 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "POST /2/users/:id/muting",
+            "documentation_url": "/en/docs/twitter-api/users/mutes/introduction",
+            "pro_limit": "50 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          }
+        ]
+      },
+      {
+        "name": "Spaces",
+        "endpoints": [
+          {
+            "endpoint": "GET /2/spaces",
+            "documentation_url": "/en/docs/twitter-api/spaces/lookup/introduction",
+            "pro_limit": "300 requests / 15 mins PER USER; 300 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER USER; 25 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/spaces/:id",
+            "documentation_url": "/en/docs/twitter-api/spaces/lookup/introduction",
+            "pro_limit": "300 requests / 15 mins PER USER; 300 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER USER; 25 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/spaces/:id/buyers",
+            "documentation_url": "/en/docs/twitter-api/spaces/lookup/introduction",
+            "pro_limit": "300 requests / 15 mins PER USER; 300 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER USER; 25 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/spaces/:id/tweets",
+            "documentation_url": "/en/docs/twitter-api/spaces/lookup/introduction",
+            "pro_limit": "300 requests / 15 mins PER USER; 300 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER USER; 25 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/spaces/by/creator_ids",
+            "documentation_url": "/en/docs/twitter-api/spaces/lookup/introduction",
+            "pro_limit": "300 requests / 15 mins PER USER; 1 requests / second PER APP",
+            "basic_limit": "5 requests / 15 mins PER USER; 25 requests / second PER APP",
+            "free_limit": "1 requests / second PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/spaces/search",
+            "documentation_url": "/en/docs/twitter-api/spaces/search/introduction",
+            "pro_limit": "300 requests / 15 mins PER USER; 300 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER USER; 25 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          }
+        ]
+      },
+      {
+        "name": "Direct Messages",
+        "endpoints": [
+          {
+            "endpoint": "DELETE /2/dm_events/:id",
+            "documentation_url": "/en/docs/twitter-api/direct-messages/manage/introduction",
+            "pro_limit": "1500 requests / 24 hours PER USER; 4000 requests / 24 hours PER APP",
+            "basic_limit": "200 requests / 15 mins PER USER; 2500 requests / 24 hours PER APP",
+            "free_limit": "N/A",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/dm_conversations/:dm_conversation_id/dm_events",
+            "documentation_url": "/en/docs/twitter-api/direct-messages/lookup/introduction",
+            "pro_limit": "15 requests / 15 mins PER USER",
+            "basic_limit": "1 requests / 24 hours PER USER",
+            "free_limit": "N/A",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/dm_conversations/with/:participant_id/dm_events",
+            "documentation_url": "/en/docs/twitter-api/direct-messages/lookup/introduction",
+            "pro_limit": "15 requests / 15 mins PER USER",
+            "basic_limit": "1 requests / 24 hours PER USER",
+            "free_limit": "N/A",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/dm_events",
+            "documentation_url": "/en/docs/twitter-api/direct-messages/lookup/introduction",
+            "pro_limit": "15 requests / 15 mins PER USER",
+            "basic_limit": "1 requests / 24 hours PER USER",
+            "free_limit": "N/A",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/dm_events/:id",
+            "documentation_url": "/en/docs/twitter-api/direct-messages/lookup/introduction",
+            "pro_limit": "15 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 24 hours PER USER",
+            "free_limit": "N/A",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "POST /2/dm_conversations",
+            "documentation_url": "/en/docs/twitter-api/direct-messages/manage/introduction",
+            "pro_limit": "15 requests / 15 mins PER USER; 1440 requests / 24 hours PER APP",
+            "basic_limit": "1 requests / 24 hours PER USER; 1 requests / 24 hours PER APP",
+            "free_limit": "N/A",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "POST /2/dm_conversations/:dm_conversation_id/messages",
+            "documentation_url": "/en/docs/twitter-api/direct-messages/manage/introduction",
+            "pro_limit": "15 requests / 15 mins PER USER; 1440 requests / 24 hours PER APP",
+            "basic_limit": "1 requests / 24 hours PER USER; 1 requests / 24 hours PER APP",
+            "free_limit": "N/A",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "POST /2/dm_conversations/with/:participant_id/messages",
+            "documentation_url": "/en/docs/twitter-api/direct-messages/manage/introduction",
+            "pro_limit": "1440 requests / 24 hours PER USER; 1440 requests / 24 hours PER APP",
+            "basic_limit": "1 requests / 24 hours PER USER; 1 requests / 24 hours PER APP",
+            "free_limit": "N/A",
+            "special_attributes": []
+          }
+        ]
+      },
+      {
+        "name": "Lists",
+        "endpoints": [
+          {
+            "endpoint": "DELETE /2/lists/:id",
+            "documentation_url": "/en/docs/twitter-api/lists/manage-lists/introduction",
+            "pro_limit": "300 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "DELETE /2/lists/:id/members/:user_id",
+            "documentation_url": "/en/docs/twitter-api/lists/list-members/introduction",
+            "pro_limit": "300 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/lists/:id",
+            "documentation_url": "/en/docs/twitter-api/lists/list-lookup/introduction",
+            "pro_limit": "75 requests / 15 mins PER USER; 75 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER USER; 5 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/lists/:id/members",
+            "documentation_url": "/en/docs/twitter-api/lists/list-members/introduction",
+            "pro_limit": "900 requests / 15 mins PER USER; 900 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER USER; 25 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/lists/:id/tweets",
+            "documentation_url": "/en/docs/twitter-api/lists/list-tweets/introduction",
+            "pro_limit": "900 requests / 15 mins PER USER; 900 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER USER; 25 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/users/:id/list_memberships",
+            "documentation_url": "/en/docs/twitter-api/lists/list-members/introduction",
+            "pro_limit": "75 requests / 15 mins PER USER; 75 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER USER; 25 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/users/:id/owned_lists",
+            "documentation_url": "/en/docs/twitter-api/lists/list-lookup/introduction",
+            "pro_limit": "15 requests / 15 mins PER USER; 15 requests / 15 mins PER APP",
+            "basic_limit": "100 requests / 24 hours PER USER; 500 requests / 24 hours PER APP",
+            "free_limit": "1 requests / 24 hours PER USER; 1 requests / 24 hours PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/users/:id/pinned_lists",
+            "documentation_url": "/en/docs/twitter-api/lists/pinned-lists/introduction",
+            "pro_limit": "15 requests / 15 mins PER USER; 15 requests / 15 mins PER APP",
+            "basic_limit": "100 requests / 24 hours PER USER; 500 requests / 24 hours PER APP",
+            "free_limit": "1 requests / 24 hours PER USER; 1 requests / 24 hours PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "POST /2/lists",
+            "documentation_url": "/en/docs/twitter-api/lists/manage-lists/introduction",
+            "pro_limit": "300 requests / 15 mins PER USER",
+            "basic_limit": "100 requests / 24 hours PER USER",
+            "free_limit": "1 requests / 24 hours PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "POST /2/lists/:id/members",
+            "documentation_url": "/en/docs/twitter-api/lists/list-members/introduction",
+            "pro_limit": "300 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "POST /2/users/:id/followed_lists",
+            "documentation_url": "/en/docs/twitter-api/lists/list-follows/introduction",
+            "pro_limit": "50 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "POST /2/users/:id/pinned_lists",
+            "documentation_url": "/en/docs/twitter-api/lists/pinned-lists/introduction",
+            "pro_limit": "50 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "PUT /2/lists/:id",
+            "documentation_url": "/en/docs/twitter-api/lists/manage-lists/introduction",
+            "pro_limit": "300 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          }
+        ]
+      },
+      {
+        "name": "Bookmarks",
+        "endpoints": [
+          {
+            "endpoint": "DELETE /2/users/:id/bookmarks/:tweet_id",
+            "documentation_url": "/en/docs/twitter-api/tweets/bookmarks/introduction",
+            "pro_limit": "50 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/users/:id/bookmarks",
+            "documentation_url": "/en/docs/twitter-api/tweets/bookmarks/introduction",
+            "pro_limit": "180 requests / 15 mins PER USER",
+            "basic_limit": "10 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/users/:id/bookmarks/folders",
+            "documentation_url": "/en/docs/twitter-api/tweets/bookmarks/introduction",
+            "pro_limit": "50 requests / 15 mins PER USER; 50 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER USER; 5 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/users/:id/bookmarks/folders/:folder_id",
+            "documentation_url": "/en/docs/twitter-api/tweets/bookmarks/introduction",
+            "pro_limit": "50 requests / 15 mins PER USER; 50 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER USER; 5 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "POST /2/users/:id/bookmarks",
+            "documentation_url": "/en/docs/twitter-api/tweets/bookmarks/introduction",
+            "pro_limit": "50 requests / 15 mins PER USER",
+            "basic_limit": "5 requests / 15 mins PER USER",
+            "free_limit": "1 requests / 15 mins PER USER",
+            "special_attributes": []
+          }
+        ]
+      },
+      {
+        "name": "Compliance",
+        "endpoints": [
+          {
+            "endpoint": "GET /2/compliance/jobs",
+            "documentation_url": "/en/docs/twitter-api/compliance/batch-compliance/introduction",
+            "pro_limit": "150 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/compliance/jobs/:job_id",
+            "documentation_url": "/en/docs/twitter-api/compliance/batch-compliance/introduction",
+            "pro_limit": "150 requests / 15 mins PER APP",
+            "basic_limit": "5 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "POST /2/compliance/jobs",
+            "documentation_url": "/en/docs/twitter-api/compliance/batch-compliance/introduction",
+            "pro_limit": "150 requests / 15 mins PER APP",
+            "basic_limit": "15 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER APP",
+            "special_attributes": []
+          }
+        ]
+      },
+      {
+        "name": "Usage",
+        "endpoints": [
+          {
+            "endpoint": "GET /2/usage/tweets",
+            "documentation_url": "/en/docs/twitter-api/usage",
+            "pro_limit": "50 requests / 15 mins PER APP",
+            "basic_limit": "50 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER APP",
+            "special_attributes": []
+          }
+        ]
+      },
+      {
+        "name": "Trends",
+        "endpoints": [
+          {
+            "endpoint": "GET /2/trends/by/woeid/:id",
+            "documentation_url": "/en/docs/x-api/trends/introduction",
+            "pro_limit": "75 requests / 15 mins PER APP",
+            "basic_limit": "15 requests / 15 mins PER APP",
+            "free_limit": "N/A",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/users/personalized_trends",
+            "documentation_url": "/en/docs/x-api/users/personalized-trends",
+            "pro_limit": "10 requests / 15 mins PER USER; 200 requests / 15 mins PER APP",
+            "basic_limit": "1 requests / 15 mins PER USER; 20 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 24 hours PER APP",
+            "special_attributes": []
+          }
+        ]
+      },
+      {
+        "name": "Communities",
+        "endpoints": [
+          {
+            "endpoint": "GET /2/communities/:id",
+            "documentation_url": "/en/docs/x-api/communities/lookup/introduction",
+            "pro_limit": "300 requests / 15 mins PER USER; 300 requests / 15 mins PER APP",
+            "basic_limit": "1 requests / 15 mins PER USER; 25 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": []
+          },
+          {
+            "endpoint": "GET /2/communities/search",
+            "documentation_url": "/en/docs/x-api/communities/search/introduction",
+            "pro_limit": "300 requests / 15 mins PER USER; 300 requests / 15 mins PER APP",
+            "basic_limit": "1 requests / 15 mins PER USER; 25 requests / 15 mins PER APP",
+            "free_limit": "1 requests / 15 mins PER USER; 1 requests / 15 mins PER APP",
+            "special_attributes": [
+              "100 results per response"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  
